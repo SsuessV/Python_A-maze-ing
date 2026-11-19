@@ -1,4 +1,4 @@
-*This project has been created as part of the 42 curriculum by suyoun and bsurilla.*
+*This project has been created as part of the 42 curriculum by drcalore, suyoun.*
 
 # A-Maze-ing
 
@@ -6,7 +6,7 @@
 
 **A-Maze-ing** is a maze generation project from the 42 curriculum, completed as a two-person group project.
 
-The objective is to generate a maze based on user-defined configuration parameters, find the shortest path between the entry and exit, and export the resulting maze into a specified output file.
+The **objective** is to generate a maze based on user-defined configuration parameters, find the shortest path between the entry and exit, and export the resulting maze into a specified output file.
 
 The program reads and validates a configuration file containing the maze dimensions, entry and exit coordinates, output filename, and generation mode.
 
@@ -162,7 +162,7 @@ They were used to:
 - Clarify configuration parsing and input validation.
 - Discuss maze generation algorithms and cell connectivity.
 - Explain graph traversal and shortest path algorithms.
-- Understand hexadecimal representation and bitwise operations.
+- Understand hexadecimal representation.
 - Review implementation approaches and help identify potential edge cases.
 - Assist with debugging and understanding error messages.
 - Help structure and refine the project documentation (README).
