@@ -1,7 +1,8 @@
 import random
 
-width = 6
-height = 7
+width = 20
+height = 20
+perfect = False
 
 class Cell:
     def __init__(self) -> None:
@@ -10,6 +11,7 @@ class Cell:
         self.south = True
         self.west = True
         self.visited = False
+        self.blocked = False
 
 
 def is_inside(row, col) -> bool:
@@ -28,6 +30,7 @@ def check_neighbors(row: int, col: int, grid: list[list[Cell]]) -> list[tuple[in
         if (
             is_inside(neighbor_row, neighbor_col) 
             and grid[neighbor_row][neighbor_col].visited is False
+            and grid[neighbor_row][neighbor_col].blocked is False
         ):
             neighbor_cell = grid[neighbor_row][neighbor_col]
             neighbors.append((neighbor_row, neighbor_col))
@@ -78,10 +81,59 @@ def maze_generator(width: int, height:int, grid: list[list[Cell]]) -> None:
             active.append((next_row, next_col))
 
 
+def forty_two(grid):
+    start_row = int((height - 5) / 2)
+    start_col_four = int((width - 7) / 2)
+    start_col_two = start_col_four + 4
+    start_cell_four = grid[start_row][start_col_four]
+    start_cell_four.blocked = True
+    start_cell_two = grid[start_row][start_col_two]
+    start_cell_two.blocked = True
+    for cell in range(2):
+        next_row = start_row + 1
+        next_cell = grid[next_row][start_col_four]
+        next_cell.blocked = True
+        start_row = next_row
+    for cell in range(2):
+        next_col = start_col_four + 1
+        next_cell = grid[start_row][next_col]
+        next_cell.blocked = True
+        start_col_four = next_col
+    for cell in range(2):
+        next_row = start_row + 1
+        next_cell = grid[next_row][start_col_four]
+        next_cell.blocked = True        
+        start_row = next_row
+    start_row = int((height - 5) / 2)
+    for cell in range(2):
+        next_col = start_col_two + 1
+        next_cell = grid[start_row][next_col]
+        next_cell.blocked = True
+        start_col_two = next_col
+    for cell in range(2):
+        next_row = start_row + 1
+        next_cell = grid[next_row][start_col_two]
+        next_cell.blocked = True
+        start_row = next_row
+    for cell in range(2):
+        next_col = start_col_two - 1
+        next_cell = grid[start_row][next_col]
+        next_cell.blocked = True
+        start_col_two = next_col
+    for cell in range(2):
+        next_row = start_row + 1
+        next_cell = grid[next_row][start_col_two]
+        next_cell.blocked = True        
+        start_row = next_row
+    for cell in range(2):
+        next_col = start_col_two + 1
+        next_cell = grid[start_row][next_col]
+        next_cell.blocked = True
+        start_col_two = next_col
 
+ 
 
-
-
+# made by chatgpt, need to redo
 def display_maze(grid: list[list[Cell]], width: int, height: int) -> None:
     for row in range(height):
         # Print north walls
@@ -111,5 +163,6 @@ def display_maze(grid: list[list[Cell]], width: int, height: int) -> None:
 
 if __name__ == "__main__":
     grid = create_grid(width, height)
-    maze_generator(width, height, grid)   
+    forty_two(grid)
+    maze_generator(width, height, grid)
     display_maze(grid, width, height)
