@@ -1,8 +1,7 @@
 import random
 
-width = 20
-height = 20
-perfect = False
+width = 10
+height = 10
 
 class Cell:
     def __init__(self) -> None:
@@ -81,7 +80,11 @@ def maze_generator(width: int, height:int, grid: list[list[Cell]]) -> None:
             active.append((next_row, next_col))
 
 
-def forty_two(grid):
+def forty_two(grid: list[list[Cell]]) -> None:
+    if height < 5 or width < 7:
+        print("[WARNING] The given dimensions are too small "
+              "to add the number '42' in the middle of the maze.")
+        return
     start_row = int((height - 5) / 2)
     start_col_four = int((width - 7) / 2)
     start_col_two = start_col_four + 4
@@ -99,7 +102,11 @@ def forty_two(grid):
         next_cell = grid[start_row][next_col]
         next_cell.blocked = True
         start_col_four = next_col
-    for cell in range(2):
+    start_row = int((height - 5) / 2)
+    start_col_four = int((width - 7) / 2) + 2
+    start_cell_four = grid[start_row][start_col_four]
+    start_cell_four.blocked = True
+    for cell in range(4):
         next_row = start_row + 1
         next_cell = grid[next_row][start_col_four]
         next_cell.blocked = True        
@@ -131,9 +138,9 @@ def forty_two(grid):
         next_cell.blocked = True
         start_col_two = next_col
 
- 
 
-# made by chatgpt, need to redo
+
+# made by chatgpt for visualization
 def display_maze(grid: list[list[Cell]], width: int, height: int) -> None:
     for row in range(height):
         # Print north walls
