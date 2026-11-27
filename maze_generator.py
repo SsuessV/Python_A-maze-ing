@@ -1,10 +1,10 @@
 import random
 
-width = 20
-height = 20
+width = 5
+height = 5
 perfect = False
-#entry = (0, 1)
-#exit_point = (16, 4)
+entry = (0, 1)
+exit_point = (16, 4)
 
 class Cell:
     def __init__(self) -> None:
@@ -14,7 +14,24 @@ class Cell:
         self.west = True
         self.visited = False
         self.blocked = False
-        self.path = False
+        #self.path = False
+
+    def hex_output(self) -> str:
+        value_north = 1
+        value_east = 2
+        value_south = 4
+        value_west = 8
+        total_value = 0
+        if self.north is True:
+            total_value += value_north
+        if self.east is True:
+            total_value += value_east
+        if self.south is True:
+            total_value += value_south
+        if self.west is True:
+            total_value += value_west
+        return format(total_value, "X")
+    
 
 
 def is_inside(width, height, row, col) -> bool:
@@ -86,7 +103,7 @@ def maze_generator(width: int, height:int, grid: list[list[Cell]]) -> None:
 
 
 def forty_two(grid: list[list[Cell]]) -> None:
-    if height < 5 or width < 7:
+    if height < 9 or width < 9:
         print("[WARNING] The given dimensions are too small "
               "to add the number '42' in the middle of the maze.")
         return
@@ -182,7 +199,21 @@ def imperfect_maze(width: int, height: int, grid: list[list[Cell]]) -> None:
         curr_col += 1
         curr_row = 0
        
-
+def create_output(entry, exit_point, grid):
+    hexa_list = []
+    for row in grid:
+        hex_value = ""
+        for cell in row:
+            hex_value += cell.hex_output()
+        hex_value += "\n"
+        hexa_list.append(hex_value)
+    with open("maze.txt", "w") as file:
+        file.writelines(hexa_list)
+        file.write("\n")
+        file.write(str(entry))
+        file.write("\n")
+        file.write(str(exit_point))
+        
 
 """
 def find_path(grid: list[list[Cell]], entry: tuple[int, int],
@@ -261,3 +292,5 @@ if __name__ == "__main__":
     if perfect is False:
         imperfect_maze(width, height, grid)
     display_maze(grid, width, height)
+    create_output(entry, exit_point, grid)
+
