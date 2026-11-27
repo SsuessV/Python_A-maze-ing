@@ -1,7 +1,10 @@
 import random
 
-width = 10
-height = 10
+width = 20
+height = 20
+perfect = False
+#entry = (0, 1)
+#exit_point = (16, 4)
 
 class Cell:
     def __init__(self) -> None:
@@ -11,23 +14,25 @@ class Cell:
         self.west = True
         self.visited = False
         self.blocked = False
+        self.path = False
 
 
-def is_inside(row, col) -> bool:
+def is_inside(width, height, row, col) -> bool:
     if row >= 0 and row < height and col >= 0 and col < width:
         return True
     else:
         return False
 
 
-def check_neighbors(row: int, col: int, grid: list[list[Cell]]) -> list[tuple[int, int]]:
+def check_neighbors(width:int, height: int, row: int, 
+                    col: int, grid: list[list[Cell]]) -> list[tuple[int, int]]:
     neighbors = []
     directions = [(0, -1), (0, +1), (-1, 0), (+1, 0)]
     for direction in directions:
         neighbor_row = row + direction[0]
         neighbor_col = col + direction[1]
         if (
-            is_inside(neighbor_row, neighbor_col) 
+            is_inside(width, height, neighbor_row, neighbor_col) 
             and grid[neighbor_row][neighbor_col].visited is False
             and grid[neighbor_row][neighbor_col].blocked is False
         ):
@@ -69,7 +74,7 @@ def maze_generator(width: int, height:int, grid: list[list[Cell]]) -> None:
     while active != []:
         curr_row, curr_col = active[-1]
         curr_cell = grid[curr_row][curr_col]
-        neighbors = check_neighbors(curr_row, curr_col, grid)
+        neighbors = check_neighbors(width, height, curr_row, curr_col, grid)
         if neighbors == []:
             active.pop()
         else:
@@ -139,8 +144,89 @@ def forty_two(grid: list[list[Cell]]) -> None:
         start_col_two = next_col
 
 
+def imperfect_maze(width: int, height: int, grid: list[list[Cell]]) -> None:
+    curr_row, curr_col = (0, 0)
+    for row in grid:
+        for cell in row:
+            curr_cell = grid[curr_row][curr_col]
+            next_col = curr_col + 1
+            if is_inside(width, height, curr_row, next_col) is True:
+                next_cell = grid[curr_row][next_col]
+            else: 
+                break
+            if (next_cell.blocked is False 
+                and curr_cell.blocked is False 
+                and curr_cell.east is True
+            ):
+                if random.random() < 0.30:
+                    wall_removal(curr_row, curr_col, curr_row, next_col, grid)
+            curr_col = next_col
+        curr_row += 1
+        curr_col = 0
+    curr_row, curr_col = (0, 0)
+    for _ in range(width):
+        for _ in range(height):
+            curr_cell = grid[curr_row][curr_col]
+            next_row = curr_row + 1
+            if is_inside(width, height, next_row, curr_col) is True:
+                next_cell = grid[next_row][curr_col]
+            else: 
+                break
+            if (next_cell.blocked is False 
+                and curr_cell.blocked is False 
+                and curr_cell.south is True
+            ):
+                if random.random() < 0.30:
+                    wall_removal(curr_row, curr_col, next_row, curr_col, grid)
+            curr_row = next_row
+        curr_col += 1
+        curr_row = 0
+       
 
-# made by chatgpt for visualization
+
+"""
+def find_path(grid: list[list[Cell]], entry: tuple[int, int],
+              exit_point: tuple[int, int]) -> dict:
+    for row in grid:
+        for cell in row:
+            cell.visited = False
+    queue = []
+    curr_row,curr_col = entry
+    curr_cell = grid[curr_row][curr_col]
+    curr_cell.visited = True
+    queue.append(entry)
+    previous = {}
+    while queue != []:
+        curr_row,curr_col = queue[0]
+        if (curr_row, curr_col) == exit_point:
+            break
+        queue.pop(0)
+        neighbors = check_neighbors(curr_row, curr_col, grid)
+        for neighbor in neighbors:
+            next_row, next_col = neighbor
+            next_cell = grid[next_row][next_col]
+            if next_cell.visited is False:
+                next_cell.visited = True
+                queue.append((next_row, next_col))
+                previous.update({(next_row, next_col): (curr_row, curr_col)})
+    return previous
+
+        
+def final_path(path_coords: dict, entry, exit_pointi, grid) -> list:
+    path = []
+    curr_cell = exit_point
+    while curr_cell != entry:
+        path.append(curr_cell)
+        curr_row, curr_col = curr_cell
+        cell = grid[curr_row][curr_col]
+        cell.path = True
+        curr_cell = path_coords[curr_cell]
+    path.append(entry)
+    path.reverse()
+    return path
+"""
+
+#made by chatgpt for visualization
 def display_maze(grid: list[list[Cell]], width: int, height: int) -> None:
     for row in range(height):
         # Print north walls
@@ -155,7 +241,8 @@ def display_maze(grid: list[list[Cell]], width: int, height: int) -> None:
         for col in range(width):
             cell = grid[row][col]
             middle += "|" if cell.west else " "
-            middle += "   "
+            middle += "###" if cell.blocked else "   "
+
         middle += "|" if grid[row][width - 1].east else " "
         print(middle)
 
@@ -165,11 +252,12 @@ def display_maze(grid: list[list[Cell]], width: int, height: int) -> None:
         cell = grid[height - 1][col]
         bottom += "+---" if cell.south else "+   "
     print(bottom + "+")
- 
 
 
 if __name__ == "__main__":
     grid = create_grid(width, height)
     forty_two(grid)
     maze_generator(width, height, grid)
+    if perfect is False:
+        imperfect_maze(width, height, grid)
     display_maze(grid, width, height)
